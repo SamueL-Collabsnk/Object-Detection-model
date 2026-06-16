@@ -1,13 +1,14 @@
-
-path: Yolo
-
+path: .
 train: train/images
-val: val/images
+val: valid/images
 test: test/images
 
-names:
-0: person 
-1: car
-2: bicycle
+nc: 2
+names: ['Icon', 'SearchBar']
 
-  
+roboflow:
+  workspace: agenttrain
+  project: agent
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/agenttrain/agent/dataset/1

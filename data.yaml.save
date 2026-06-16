@@ -1,0 +1,16 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 2
+names: ['Icon', 'SearchBar']
+
+roboflow:
+  workspace: agenttrain
+  project: agent
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/agenttrain/agent/dataset/1
+^X
+
+

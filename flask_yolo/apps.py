@@ -15,8 +15,19 @@ os.makedirs(
     UPLOAD_FOLDER,
     exist_ok= True
 )
+MODEL_PATH = "best.pt"
+model = None
 
-model = YOLO("best.pt")
+if os.path.isfile(MODEL_PATH):
+    try:
+        model = YOLO(MODEL_PATH)
+    except Exception as e:
+        print(f"Failed t load {MODEL_PATH}:{e}") 
+        model = None
+    else:
+        print(f"{MODEL_PATH} not found. Place weights at{MODEL_PATH} or change MODEL_PATH.")
+               
+        
 
 @app.route("/")
 def home():
@@ -29,17 +40,23 @@ def home():
 def predict():
     if "image" not in request.files:
         return jsonify({"error":"No image uploaded"} ), 400
+    if model is None:
+        return jsonify ({
+            "error":"Model not loaded. Put best.pt  at project root or update MODEL_PATH."
+        })
         
     image = request.files["image"]   
     
     if image.filename == "":
         return jsonify({"error":"Empty file"}), 400
 
-    filepath = os.path.join(UPLOAD_FOLDER, image.filename)
+    filename = secure_filename(image.filename)
+    filepath = os.path.join(UPLOAD_FOLDER, filename)
 
     image.save(filepath)
 
     results = predict(source = filepath,conf = 0.25)
+    results = model.predict(source=filepath, conf=0.25)
 
     detections = []
 
@@ -56,6 +73,18 @@ def predict():
                 "confidence": round(conf, 4)
             }
         )    
+    for result in results:
+        boxex = getattr(result, "boxes", [])
+        for box in boxes:
+            try:
+                cls = int(box.cls[0])
+                conf = float(box.conf[0])    
+            except Exception:
+                 continue
+            label = model.names[cls] if  isinstance(
+                 model.names, (list,tuple)) else model.names.get(cls, str(cls))
+            detections.append({"class": label, "confidence": round(conf, 4)})
+                
     return jsonify(
             {
               "detections": detections
