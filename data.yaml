@@ -1,0 +1,13 @@
+
+path: Yolo
+
+train: train/images
+val: val/images
+test: test/images
+
+names:
+0: person 
+1: car
+2: bicycle
+
+  
