@@ -1,13 +1,20 @@
 from ultralytics import YOLO
 
-model = YOLO(
-    "runs/detetct/yolo_experiment/weights/best.pt"
-)
+# Load trained model (correct path)
+model = YOLO("runs/detect/runs/yolo_experiment-3/weights/best.pt")
 
+# Run inference
 results = model.predict(
-    source = "test.jpg",
-    conf = 0.25,
-    save = True
+    source="test/images",
+    save=True,
+    show=True,
+    conf=0.25
 )
 
-print(results)
+print("Inference complete")
+
+
+
+
+
+
