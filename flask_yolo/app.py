@@ -52,15 +52,16 @@ def detect():
     try:
         results = model.predict(source=path, conf = 0.25)
     except Exception as e:
-        return jsonify({"error":"Prediction failed"}),500    
+        return jsonify({"error":f"Prediction failed:{str(e)}"}),500    
          
     detections = []
 
     for r in results:
         for box in getattr(r, "boxes", []):
+            class_id = int(box.cls[0])
             detections.append({
-                "class": int(box.cls[0])if hasattr (box, "cls") else None,
-                "confidence": float(box.conf[0]) if hasattr (box, "conf") else None
+                "class": model.names[class_id],
+                "confidence": float(box.conf[0])
             })
 
     return jsonify(detections)
